@@ -1,0 +1,20 @@
+const fs = require('fs');
+let content = fs.readFileSync('script.js', 'utf8');
+
+// 1. Фон городов
+content = content.replace(/const cityBackgrounds = \[[\s\S]*?\];/, `const cityBackgrounds = [
+    'https://sereneworld.in/uploads/blogs/1755675796_istockphoto-2157513326-612x612.jpg', // Тошкент
+    'https://mrwallpaper.com/images/file/registon-square-samarkand-during-sunrise-bzw0eg6n2mnoytv6.jpg', // Самарканд
+    'https://quto.ru/imgs/2024/05/31/09/6486117/6c0e562fadc3c967ea13f2da90b686d4c2af5a0f.jpg', // Бухоро
+    'https://resize.tripster.ru/eEA3zW9kMZtdp1YvCr2Eb-LpoQs=/fit-in/1080x810/filters:no_upscale()/https://cdn.tripster.ru/photos/1bca6d20-7460-4709-bc8e-84fe01daadd5.jpg', // Хива
+    'https://uzbekistan.travel/storage/app/uploads/public/670/deb/905/thumb_3927_1920_0_0_0_auto.jpg' // Фаргона
+];`);
+
+// 2. Логика возврата фона
+content = content.replace(/if \(screenId === 'start-screen'\) {[\s\S]*?document\.getElementById\('background-slider'\)\.innerHTML = '';/g, `if (screenId === 'start-screen' || screenId === 'map-screen') {\n        if (!bgInterval) initMenuSlider(); // Возвращаем слайдер если он остановлен\n        if (screenId === 'map-screen') container.classList.add('fullscreen');`);
+
+// 3. Убираем префиксы из вопросов
+content = content.replace(/question:\s*"(?:\d-sinov:\s*|KATTA SINOV:\s*|KATTA SINOV \(Yakuniy\):\s*|KATTA SINOV )?(.*?)"/g, 'question: "$1"');
+
+fs.writeFileSync('script.js', content, 'utf8');
+console.log('Script updated successfully!');
